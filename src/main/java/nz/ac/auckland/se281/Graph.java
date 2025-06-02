@@ -32,4 +32,33 @@ public class Graph {
   public boolean hasCountry(String country) {
     return countries.containsKey(country);
   }
+
+  // Finds the shortest route between two countries using BFS
+  public List<String> findShortestRoute(String startCountry, String destCountry) {
+    Map<String, String> prev = new HashMap<>();
+    Queue<String> queue = new LinkedList<>();
+    Set<String> visited = new HashSet<>();
+    queue.add(startCountry);
+    visited.add(startCountry);
+
+    while (!queue.isEmpty()) {
+      String current = queue.poll();
+      if (current.equals(destCountry)) {
+        // Build path
+        LinkedList<String> path = new LinkedList<>();
+        for (String at = destCountry; at != null; at = prev.get(at)) {
+          path.addFirst(at);
+        }
+        return path;
+      }
+      for (String neighbor : getNeighbors(current)) {
+        if (!visited.contains(neighbor)) {
+          visited.add(neighbor);
+          prev.put(neighbor, current);
+          queue.add(neighbor);
+        }
+      }
+    }
+    return null; // No route found
+  }
 }

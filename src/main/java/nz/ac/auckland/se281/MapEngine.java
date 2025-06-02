@@ -128,5 +128,52 @@ public class MapEngine {
         break;
       }
     }
+
+    // --- Compute the fastest route (BFS for shortest path in unweighted graph) ---
+    List<String> route = graph.findShortestRoute(startCountry, destCountry);
+    if (route == null || route.isEmpty()) {
+      MessageCli.NO_CROSSBORDER_TRAVEL.printMessage(startCountry, destCountry);
+      return;
+    }
+
+    // Display the route
+    MessageCli.ROUTE_INFO.printMessage(route.toString());
+
+    // --- Compute total fuel required (excluding start and destination) ---
+    int totalFuel = 0;
+    // Map to store continent and its fuel consumption
+    java.util.Map<String, Integer> continentFuel = new java.util.LinkedHashMap<>();
+    // Set to store continents visited in order
+    java.util.LinkedHashSet<String> continentsVisited = new java.util.LinkedHashSet<>();
+
+    for (int i = 1; i < route.size() - 1; i++) {
+      String country = route.get(i);
+      int fuel = graph.getFuelCost(country);
+      String continent = graph.getContinent(country);
+      totalFuel += fuel;
+      continentsVisited.add(continent);
+      continentFuel.put(continent, continentFuel.getOrDefault(continent, 0) + fuel);
+    }
+
+    MessageCli.FUEL_INFO.printMessage(String.valueOf(totalFuel));
+
+    // --- Display continents visited and fuel per continent ---
+    for (String continent : continentsVisited) {
+      int fuel = continentFuel.getOrDefault(continent, 0);
+      MessageCli.FUEL_CONTINENT_INFO.printMessage(continent, String.valueOf(fuel));
+    }
+
+    // --- Find continent with highest fuel spent ---
+    String maxContinent = null;
+    int maxFuel = -1;
+    for (java.util.Map.Entry<String, Integer> entry : continentFuel.entrySet()) {
+      if (entry.getValue() > maxFuel) {
+        maxFuel = entry.getValue();
+        maxContinent = entry.getKey();
+      }
+    }
+    if (maxContinent != null) {
+      MessageCli.FUEL_CONTINENT_INFO.printMessage(maxContinent, String.valueOf(maxFuel));
+    }
   }
 }
