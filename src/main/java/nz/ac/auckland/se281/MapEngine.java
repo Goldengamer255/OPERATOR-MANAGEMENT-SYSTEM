@@ -183,5 +183,19 @@ public class MapEngine {
     }
     continentInfo.append("]");
     MessageCli.CONTINENT_INFO.printMessage(continentInfo.toString());
+
+    // --- Print the continent with the highest fuel spent (if any > 0) ---
+    String maxContinent = null;
+    int maxFuel = -1;
+    for (String continent : continentsVisited) {
+      int fuel = continentFuel.getOrDefault(continent, 0);
+      if (fuel > maxFuel) {
+        maxFuel = fuel;
+        maxContinent = continent;
+      }
+    }
+    if (maxContinent != null && maxFuel > 0) {
+      MessageCli.FUEL_CONTINENT_INFO.printMessage(maxContinent + " (" + maxFuel + ")");
+    }
   }
 }
