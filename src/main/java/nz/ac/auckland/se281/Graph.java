@@ -10,33 +10,36 @@ import java.util.Queue;
 import java.util.Set;
 
 public class Graph {
-  private Map<String, Country> countries = new HashMap<>();
-  private Map<String, List<String>> adjList = new HashMap<>();
+  private Map<String, Country> countries =
+      new HashMap<>(); // Map to store countries with their details
+  private Map<String, List<String>> adjList =
+      new HashMap<>(); // Adjacency list to represent the graph
 
-  public void addCountry(String name, String continent, int fuelCost) {
+  public void addCountry(
+      String name, String continent, int fuelCost) { // Add a country to the graph
     countries.put(name, new Country(name, continent, fuelCost));
     adjList.putIfAbsent(name, new ArrayList<>());
   }
 
-  public void addEdge(String country, String neighbor) {
+  public void addEdge(String country, String neighbor) { // Add an edge between two countries
     if (!adjList.get(country).contains(neighbor)) {
       adjList.get(country).add(neighbor);
     }
   }
 
-  public List<String> getNeighbors(String country) {
+  public List<String> getNeighbors(String country) { // Get the neighbors of a country
     return adjList.getOrDefault(country, new ArrayList<>());
   }
 
-  public String getContinent(String country) {
+  public String getContinent(String country) { // Get the continent of a country
     return countries.get(country).getContinent();
   }
 
-  public int getFuelCost(String country) {
+  public int getFuelCost(String country) { // Get the fuel cost for a country
     return countries.get(country).getFuelCost();
   }
 
-  public boolean hasCountry(String country) {
+  public boolean hasCountry(String country) { // Check if the country exists in the graph
     return countries.containsKey(country);
   }
 
@@ -48,7 +51,7 @@ public class Graph {
     queue.add(startCountry);
     visited.add(startCountry);
 
-    while (!queue.isEmpty()) {
+    while (!queue.isEmpty()) { // While there are countries to process
       String current = queue.poll();
       if (current.equals(destCountry)) {
         // Build path
@@ -58,7 +61,7 @@ public class Graph {
         }
         return path;
       }
-      for (String neighbor : getNeighbors(current)) {
+      for (String neighbor : getNeighbors(current)) { // Get neighbors of the current country
         if (!visited.contains(neighbor)) {
           visited.add(neighbor);
           prev.put(neighbor, current);
