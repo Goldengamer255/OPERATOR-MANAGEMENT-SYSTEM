@@ -11,6 +11,23 @@ public class MapEngine {
     loadMap(); // keep this mehtod invocation
   }
 
+  private String promptAndFormatCountry(MessageCli promptMessage) {
+    promptMessage.printMessage();
+    String countryInput = Utils.scanner.nextLine().trim();
+    String[] words = countryInput.split("\\s+");
+    StringBuilder sb = new StringBuilder();
+    for (String word : words) {
+      if (word.length() > 0) {
+        sb.append(Character.toUpperCase(word.charAt(0)));
+        if (word.length() > 1) {
+          sb.append(word.substring(1)); // keep rest as user input
+        }
+        sb.append(" ");
+      }
+    }
+    return sb.toString().trim();
+  }
+
   /** invoked one time only when constracting the MapEngine class. */
   private void loadMap() {
 
@@ -43,20 +60,7 @@ public class MapEngine {
   /** this method is invoked when the user run the command info-country. */
   public void showInfoCountry() {
     while (true) {
-      MessageCli.INSERT_COUNTRY.printMessage();
-      String countryInput = Utils.scanner.nextLine().trim();
-      String[] words = countryInput.split("\\s+");
-      StringBuilder sb = new StringBuilder();
-      for (String word : words) {
-        if (word.length() > 0) {
-          sb.append(Character.toUpperCase(word.charAt(0)));
-          if (word.length() > 1) {
-            sb.append(word.substring(1)); // keep rest as user input
-          }
-          sb.append(" ");
-        }
-      }
-      String country = sb.toString().trim();
+      String country = promptAndFormatCountry(MessageCli.INSERT_COUNTRY);
       try {
         if (!graph.hasCountry(country)) {
           throw new Exception();
@@ -66,7 +70,7 @@ public class MapEngine {
         List<String> neighbours = graph.getNeighbors(country);
         MessageCli.COUNTRY_INFO.printMessage(
             country, continent, String.valueOf(fuelCost), neighbours.toString());
-        break; // Exit loop if successful
+        break;
       } catch (Exception e) {
         MessageCli.INVALID_COUNTRY.printMessage(country);
       }
@@ -80,51 +84,23 @@ public class MapEngine {
 
     // Ask for start country
     while (true) {
-      MessageCli.INSERT_SOURCE.printMessage();
-      String input = Utils.scanner.nextLine().trim();
-      String[] words = input.split("\\s+");
-      StringBuilder sb = new StringBuilder();
-      for (String word : words) {
-        if (word.length() > 0) {
-          sb.append(Character.toUpperCase(word.charAt(0)));
-          if (word.length() > 1) {
-            sb.append(word.substring(1)); // keep rest as user input
-          }
-          sb.append(" ");
-        }
-      }
-      String country = sb.toString().trim();
-      if (!graph.hasCountry(country)) {
-        MessageCli.INVALID_COUNTRY.printMessage(country);
+      startCountry = promptAndFormatCountry(MessageCli.INSERT_SOURCE);
+      if (!graph.hasCountry(startCountry)) {
+        MessageCli.INVALID_COUNTRY.printMessage(startCountry);
       } else {
-        startCountry = country;
         break;
       }
     }
 
     // Ask for destination country
     while (true) {
-      MessageCli.INSERT_DESTINATION.printMessage();
-      String input = Utils.scanner.nextLine().trim();
-      String[] words = input.split("\\s+");
-      StringBuilder sb = new StringBuilder();
-      for (String word : words) {
-        if (word.length() > 0) {
-          sb.append(Character.toUpperCase(word.charAt(0)));
-          if (word.length() > 1) {
-            sb.append(word.substring(1)); // keep rest as user input
-          }
-          sb.append(" ");
-        }
-      }
-      String country = sb.toString().trim();
-      if (!graph.hasCountry(country)) {
-        MessageCli.INVALID_COUNTRY.printMessage(country);
-      } else if (country.equals(startCountry)) {
-        MessageCli.NO_CROSSBORDER_TRAVEL.printMessage(country);
+      destCountry = promptAndFormatCountry(MessageCli.INSERT_DESTINATION);
+      if (!graph.hasCountry(destCountry)) {
+        MessageCli.INVALID_COUNTRY.printMessage(destCountry);
+      } else if (destCountry.equals(startCountry)) {
+        MessageCli.NO_CROSSBORDER_TRAVEL.printMessage(destCountry);
         return; // End the method if no cross-border travel is required
       } else {
-        destCountry = country;
         break;
       }
     }
