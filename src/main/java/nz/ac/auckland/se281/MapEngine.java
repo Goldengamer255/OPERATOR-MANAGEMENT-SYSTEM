@@ -158,22 +158,21 @@ public class MapEngine {
     MessageCli.FUEL_INFO.printMessage(String.valueOf(totalFuel));
 
     // --- Display continents visited and fuel per continent ---
+    StringBuilder continentInfo = new StringBuilder();
+    continentInfo.append("[");
+    boolean first = true;
     for (String continent : continentsVisited) {
-      int fuel = continentFuel.getOrDefault(continent, 0);
-      MessageCli.FUEL_CONTINENT_INFO.printMessage(continent, String.valueOf(fuel));
-    }
-
-    // --- Find continent with highest fuel spent ---
-    String maxContinent = null;
-    int maxFuel = -1;
-    for (java.util.Map.Entry<String, Integer> entry : continentFuel.entrySet()) {
-      if (entry.getValue() > maxFuel) {
-        maxFuel = entry.getValue();
-        maxContinent = entry.getKey();
+      if (!first) {
+        continentInfo.append(", ");
       }
+      continentInfo
+          .append(continent)
+          .append(" (")
+          .append(continentFuel.getOrDefault(continent, 0))
+          .append(")");
+      first = false;
     }
-    if (maxContinent != null) {
-      MessageCli.FUEL_CONTINENT_INFO.printMessage(maxContinent, String.valueOf(maxFuel));
-    }
+    continentInfo.append("]");
+    MessageCli.CONTINENT_INFO.printMessage(continentInfo.toString());
   }
 }
