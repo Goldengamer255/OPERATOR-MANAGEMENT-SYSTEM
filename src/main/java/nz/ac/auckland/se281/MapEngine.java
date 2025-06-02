@@ -43,19 +43,35 @@ public class MapEngine {
 
   /** this method is invoked when the user run the command info-country. */
   public void showInfoCountry() {
-    MessageCli.INSERT_COUNTRY.printMessage();
-    String country = Utils.scanner.nextLine().trim();
-    try {
-      if (!graph.hasCountry(country)) {
-        throw new Exception();
+    while (true) {
+      MessageCli.INSERT_COUNTRY.printMessage();
+      String countryInput = Utils.scanner.nextLine().trim();
+      // Capitalize each word
+      String[] words = countryInput.split("\\s+");
+      StringBuilder sb = new StringBuilder();
+      for (String word : words) {
+        if (word.length() > 0) {
+          sb.append(Character.toUpperCase(word.charAt(0)));
+          if (word.length() > 1) {
+            sb.append(word.substring(1).toLowerCase());
+          }
+          sb.append(" ");
+        }
       }
-      String continent = graph.getContinent(country);
-      int fuelCost = graph.getFuelCost(country);
-      List<String> neighbours = graph.getNeighbors(country);
-      MessageCli.COUNTRY_INFO.printMessage(
-          country, continent, String.valueOf(fuelCost), neighbours.toString());
-    } catch (Exception e) {
-      MessageCli.INVALID_COUNTRY.printMessage(country);
+      String country = sb.toString().trim();
+      try {
+        if (!graph.hasCountry(country)) {
+          throw new Exception();
+        }
+        String continent = graph.getContinent(country);
+        int fuelCost = graph.getFuelCost(country);
+        List<String> neighbours = graph.getNeighbors(country);
+        MessageCli.COUNTRY_INFO.printMessage(
+            country, continent, String.valueOf(fuelCost), neighbours.toString());
+        break; // Exit loop if successful
+      } catch (Exception e) {
+        MessageCli.INVALID_COUNTRY.printMessage(country);
+      }
     }
   }
 
