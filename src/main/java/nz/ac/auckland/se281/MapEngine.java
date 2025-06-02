@@ -141,11 +141,15 @@ public class MapEngine {
 
     // --- Compute total fuel required (excluding start and destination) ---
     int totalFuel = 0;
-    // Map to store continent and its fuel consumption
     java.util.Map<String, Integer> continentFuel = new java.util.LinkedHashMap<>();
-    // Set to store continents visited in order
     java.util.LinkedHashSet<String> continentsVisited = new java.util.LinkedHashSet<>();
 
+    // Always add start continent first
+    String startContinent = graph.getContinent(startCountry);
+    continentsVisited.add(startContinent);
+    continentFuel.putIfAbsent(startContinent, 0);
+
+    // Add fuel for intermediate countries
     for (int i = 1; i < route.size() - 1; i++) {
       String country = route.get(i);
       int fuel = graph.getFuelCost(country);
@@ -154,6 +158,11 @@ public class MapEngine {
       continentsVisited.add(continent);
       continentFuel.put(continent, continentFuel.getOrDefault(continent, 0) + fuel);
     }
+
+    // Always add destination continent last
+    String destContinent = graph.getContinent(destCountry);
+    continentsVisited.add(destContinent);
+    continentFuel.putIfAbsent(destContinent, 0);
 
     MessageCli.FUEL_INFO.printMessage(String.valueOf(totalFuel));
 
