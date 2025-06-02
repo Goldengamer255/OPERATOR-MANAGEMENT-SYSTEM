@@ -38,7 +38,6 @@ public class MapEngine {
         graph.addEdge(country, neighbor);
       }
     }
-    System.out.println("India neighbors: " + graph.getNeighbors("India"));
   }
 
   /** this method is invoked when the user run the command info-country. */
@@ -75,5 +74,59 @@ public class MapEngine {
   }
 
   /** this method is invoked when the user run the command route. */
-  public void showRoute() {}
+  public void showRoute() {
+    String startCountry = null;
+    String destCountry = null;
+
+    // Ask for start country
+    while (true) {
+      MessageCli.INSERT_SOURCE.printMessage();
+      String input = Utils.scanner.nextLine().trim();
+      String[] words = input.split("\\s+");
+      StringBuilder sb = new StringBuilder();
+      for (String word : words) {
+        if (word.length() > 0) {
+          sb.append(Character.toUpperCase(word.charAt(0)));
+          if (word.length() > 1) {
+            sb.append(word.substring(1)); // keep rest as user input
+          }
+          sb.append(" ");
+        }
+      }
+      String country = sb.toString().trim();
+      if (!graph.hasCountry(country)) {
+        MessageCli.INVALID_COUNTRY.printMessage(country);
+      } else {
+        startCountry = country;
+        break;
+      }
+    }
+
+    // Ask for destination country
+    while (true) {
+      MessageCli.INSERT_DESTINATION.printMessage();
+      String input = Utils.scanner.nextLine().trim();
+      String[] words = input.split("\\s+");
+      StringBuilder sb = new StringBuilder();
+      for (String word : words) {
+        if (word.length() > 0) {
+          sb.append(Character.toUpperCase(word.charAt(0)));
+          if (word.length() > 1) {
+            sb.append(word.substring(1)); // keep rest as user input
+          }
+          sb.append(" ");
+        }
+      }
+      String country = sb.toString().trim();
+      if (!graph.hasCountry(country)) {
+        MessageCli.INVALID_COUNTRY.printMessage(country);
+      } else if (country.equals(startCountry)) {
+        MessageCli.NO_CROSSBORDER_TRAVEL.printMessage(country);
+        return; // End the method if no cross-border travel is required
+      } else {
+        destCountry = country;
+        break;
+      }
+    }
+  }
 }
