@@ -40,8 +40,8 @@ public class MapEngine {
   /** invoked one time only when constracting the MapEngine class. */
   private void loadMap() {
 
-    List<String> countries = Utils.readCountries();
-    List<String> adjacencies = Utils.readAdjacencies();
+    List<String> countries = new java.util.ArrayList<>(Utils.readCountries());
+    List<String> adjacencies = new java.util.ArrayList<>(Utils.readAdjacencies());
 
     graph = new Graph(); // Initialize the graph
 
@@ -188,7 +188,7 @@ public class MapEngine {
         maxContinent = continent;
       }
     }
-    if (maxContinent != null && maxFuel > 0) {
+    if (maxContinent != null) {
       MessageCli.FUEL_CONTINENT_INFO.printMessage(
           maxContinent + " (" + maxFuel + ")"); // Print the continent with the highest fuel cost
     }
